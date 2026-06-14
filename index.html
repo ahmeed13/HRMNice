@@ -169,6 +169,17 @@
             th, td { border: 1px solid #000; padding: 8px; font-size: 0.85rem; }
             th { background: #eee !important; color: black; }
         }
+        
+        /* شارات الأقسام المميزة */
+        .dept-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+        .dept-nicecurl { background-color: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
+        .dept-restaurant { background-color: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
     </style>
 </head>
 <body>
@@ -176,7 +187,7 @@
     <div id="loginOverlay">
         <div class="login-box">
             <h2><i class="fa-solid fa-lock" style="color: var(--primary);"></i> لوحة الإدارة</h2>
-            <p>النظام محمي، الرجاء إدخال رمز المرور السري</p>
+            <p>النظام محمي، الرجاء إدخل رمز المرور السري</p>
             <input type="password" id="adminPassword" placeholder="******" onkeypress="handleLoginKeyPress(event)" inputmode="numeric">
             <button onclick="loginToSystem()">تسجيل الدخول <i class="fa-solid fa-arrow-left"></i></button>
             <div id="loginError">الرمز غير صحيح، حاول مرة أخرى!</div>
@@ -223,6 +234,14 @@
                             <option value="11">كانون الأول (12)</option>
                         </select>
                     </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="color: var(--primary); font-weight: 900;"><i class="fas fa-building"></i> الفلترة حسب القسم الحالي:</label>
+                        <select id="globalDepartment" onchange="onGlobalDepartmentChange()" style="border-color: var(--primary); background: #fff;">
+                            <option value="all">كافة الموظفين (كل الأقسام)</option>
+                            <option value="نايس كيرل">وكالة نايس كيرل</option>
+                            <option value="مطعم 88">مطعم 88</option>
+                        </select>
+                    </div>
                     <div style="display:flex; flex-direction:column; justify-content:center;">
                         <span style="font-size: 0.85rem; font-weight:700; color:var(--text-muted);" id="quickMonthMetaInfo">جاري الحساب...</span>
                     </div>
@@ -241,7 +260,7 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-info"><h3>إجمالي الموظفين النشطين</h3><p id="stat_totalEmployees">0</p></div>
+                    <div class="stat-info"><h3>إجمالي الموظفين النشطين بالقسم</h3><p id="stat_totalEmployees">0</p></div>
                     <div class="stat-icon"><i class="fas fa-user-friends"></i></div>
                 </div>
                 <div class="stat-card success">
@@ -253,7 +272,7 @@
                     <div class="stat-icon"><i class="fas fa-user-times"></i></div>
                 </div>
                 <div class="stat-card warning">
-                    <div class="stat-info"><h3>صافي كلفة الرواتب المتوقعة</h3><p id="stat_totalNetPayroll">0 د.ع</p></div>
+                    <div class="stat-info"><h3>صافي كلفة الرواتب المتوقعة للقسم</h3><p id="stat_totalNetPayroll">0 د.ع</p></div>
                     <div class="stat-icon"><i class="fas fa-money-bill-wave"></i></div>
                 </div>
             </div>
@@ -348,6 +367,7 @@
                             <thead>
                                 <tr>
                                     <th>الموظف</th>
+                                    <th>القسم</th>
                                     <th>الأساسي (د.ع)</th>
                                     <th>الراتب اليومي</th>
                                     <th>غياب</th>
@@ -372,7 +392,7 @@
                                 <label style="margin: 0; white-space: nowrap; color: var(--text-muted);">تاريخ الصرف الجماعي المبدئي:</label>
                                 <input type="date" id="disbursementDateInput" style="padding: 8px; border-radius: 8px; border: 1px solid var(--border);">
                             </div>
-                            <button class="btn btn-success" onclick="disburseAllCurrentMonth()"><i class="fas fa-check-double"></i> صرف للجميع دفعة واحدة</button>
+                            <button class="btn btn-success" onclick="disburseAllCurrentMonth()"><i class="fas fa-check-double"></i> صرف للقسم الحالي دفعة واحدة</button>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -421,7 +441,7 @@
                             <tbody id="dateReportTableBody"></tbody>
                             <tfoot>
                                 <tr style="background: var(--gray-light); font-weight: bold;">
-                                    <td colspan="2" style="text-align: right; padding:15px; font-size:1.05rem;">إجمالي الرواتب المصروفة خلال هذه الفترة المحددة:</td>
+                                    <td colspan="2" style="text-align: right; padding:15px; font-size:1.05rem;">إجمالي الرواتب المصروفة للقسم الحالي خلال هذه الفترة:</td>
                                     <td id="dateReportTotal" style="color: var(--success-hover); font-weight: 900; font-size:1.2rem; text-align:center;">0 د.ع</td>
                                     <td colspan="2"></td>
                                 </tr>
@@ -496,7 +516,9 @@
             </div>
 
         </div>
-    </div> <div class="modal-overlay" id="employeeModal">
+    </div> 
+    
+    <div class="modal-overlay" id="employeeModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="employeeModalTitle">إضافة موظف جديد بالنظام</h3>
@@ -513,10 +535,16 @@
                         <label>الراتب الشهري الأساسي (بالدينار العراقي) *</label>
                         <input type="number" id="empFormSalary" required min="0" step="250">
                     </div>
+                    
                     <div class="form-group">
-                        <label>القسم المالي / الإداري:</label>
-                        <input type="text" id="empFormDepartment">
+                        <label>القسم الإداري *</label>
+                        <select id="empFormDepartment" required>
+                            <option value="">-- يرجى اختيار القسم --</option>
+                            <option value="نايس كيرل">وكالة نايس كيرل</option>
+                            <option value="مطعم 88">مطعم 88</option>
+                        </select>
                     </div>
+                    
                     <div class="form-group">
                         <label>رقم هاتف الموظف:</label>
                         <input type="text" id="empFormPhone">
@@ -636,7 +664,6 @@
 
         // ================= دوال تسجيل الدخول والحماية =================
         document.addEventListener("DOMContentLoaded", () => {
-            // التحقق مما إذا كان المدير قد سجل دخوله مسبقاً في هذه الجلسة
             if (sessionStorage.getItem("admin_logged_in") === "true") {
                 unlockSystem();
             }
@@ -658,11 +685,9 @@
         }
 
         function unlockSystem() {
-            // إخفاء شاشة القفل وإظهار الموقع
             document.getElementById("loginOverlay").style.display = "none";
             document.getElementById("mainAppContent").style.display = "block";
             
-            // البدء بجلب البيانات من السيرفر فقط بعد فك القفل (لزيادة الأمان وتقليل التحميل)
             initializeDefaultDates();
             loadFromGoogleSheet();
         }
@@ -676,6 +701,7 @@
         let absenceRecords = []; 
         let itemsRecords = []; 
         let currentMonthKey = ""; 
+        let currentDepartment = "all"; // المتغير الإداري لتخزين القسم المحدد حالياً
 
         function initializeDefaultDates() {
             const today = new Date();
@@ -719,8 +745,8 @@
                 if(localStorage.getItem("smart_sys_month_settings")) {
                     monthSettings = JSON.parse(localStorage.getItem("smart_sys_month_settings"));
                     if (monthSettings._absenceRecords) absenceRecords = monthSettings._absenceRecords;
-                    if (monthSettings._disbursements) disbursements = monthSettings._disbursements;
-                    if (monthSettings._itemsRecords) itemsRecords = monthSettings._itemsRecords;
+                    if (monthSettings._disbursements) disbursements = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._disbursements || [];
+                    if (monthSettings._itemsRecords) itemsRecords = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._itemsRecords || [];
                 }
                 onGlobalMonthYearChange();
             }
@@ -806,6 +832,47 @@
             recalculateWholeSystem();
         }
 
+        function updateDepartmentDropdown() {
+            const deptSelect = document.getElementById("globalDepartment");
+            if(!deptSelect) return;
+            const previousSelection = deptSelect.value || "all";
+            
+            // التأكد من تضمين الأقسام الافتراضية مع أي أقسام أخرى قد تضاف مستقبلاً
+            const departments = [...new Set(["نايس كيرل", "مطعم 88", ...employees.map(e => e.department).filter(Boolean)])];
+            
+            let html = '<option value="all">كافة الموظفين (كل الأقسام)</option>';
+            departments.forEach(dept => {
+                const displayName = dept === "نايس كيرل" ? "وكالة نايس كيرل" : dept;
+                html += `<option value="${dept}">${displayName}</option>`;
+            });
+            deptSelect.innerHTML = html;
+            
+            if (departments.includes(previousSelection) || previousSelection === "all") {
+                deptSelect.value = previousSelection;
+                currentDepartment = previousSelection;
+            } else {
+                deptSelect.value = "all";
+                currentDepartment = "all";
+            }
+        }
+
+        function onGlobalDepartmentChange() {
+            currentDepartment = document.getElementById("globalDepartment").value;
+            recalculateWholeSystem();
+        }
+
+        // دالة مساعدة لجلب الموظفين المفلترين حسب القسم المختار حالياً
+        function getFilteredEmployees() {
+            if (currentDepartment === "all") return employees;
+            return employees.filter(emp => emp.department === currentDepartment);
+        }
+
+        function getDeptBadge(deptName) {
+            if (deptName === 'نايس كيرل') return `<span class="dept-badge dept-nicecurl">نايس كيرل</span>`;
+            if (deptName === 'مطعم 88') return `<span class="dept-badge dept-restaurant">مطعم 88</span>`;
+            return `<span class="dept-badge" style="background:#e2e8f0; color:#334155;">${deptName || '-'}</span>`;
+        }
+
         function refreshMonthSettingsUI() {
             const config = monthSettings[currentMonthKey];
             document.getElementById("msTotalDays").value = config.totalDays;
@@ -856,6 +923,7 @@
         }
 
         function recalculateWholeSystem() {
+            updateDepartmentDropdown();
             updateGlobalStats();
             renderEmployeesList();
             renderAttendanceTable();
@@ -866,11 +934,12 @@
         }
 
         function updateGlobalStats() {
-            document.getElementById("stat_totalEmployees").textContent = employees.length;
+            const filteredEmps = getFilteredEmployees();
+            document.getElementById("stat_totalEmployees").textContent = filteredEmps.length;
             let totalPresent = 0, totalAbsent = 0, totalNetPayroll = 0;
             const config = monthSettings[currentMonthKey];
 
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const att = attendance[currentMonthKey]?.[emp.id] || { present: config.workingDays, absent: 0 };
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 totalPresent += att.present; totalAbsent += absentDays;
@@ -899,9 +968,10 @@
 
         function renderEmployeesList() {
             const container = document.getElementById("employeesContainer");
-            if(employees.length === 0) { container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-users"></i><h3>لا يوجد موظفون في قاعدة البيانات حالياً</h3></div>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) { container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;"><i class="fas fa-users"></i><h3>لا يوجد موظفون في هذا القسم حالياً</h3></div>`; return; }
             let html = "";
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const att = attendance[currentMonthKey]?.[emp.id] || { present: monthSettings[currentMonthKey].workingDays };
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 
@@ -911,7 +981,7 @@
                             <div class="emp-avatar">${emp.name.charAt(0)}</div>
                             <div class="emp-details">
                                 <h4>${emp.name}</h4>
-                                <p><i class="fas fa-briefcase"></i> القسم: ${emp.department || 'غير محدد'} | الهاتف: ${emp.phone || 'غير مسجل'}</p>
+                                <p><i class="fas fa-briefcase"></i> القسم: ${getDeptBadge(emp.department)} | الهاتف: ${emp.phone || 'غير مسجل'}</p>
                             </div>
                         </div>
                         <div class="emp-stats-quick">
@@ -937,7 +1007,7 @@
             const id = document.getElementById("empFormId").value;
             const name = document.getElementById("empFormName").value.trim();
             const salary = parseFloat(document.getElementById("empFormSalary").value);
-            const department = document.getElementById("empFormDepartment").value.trim();
+            const department = document.getElementById("empFormDepartment").value;
             const phone = document.getElementById("empFormPhone").value.trim();
 
             if(id) {
@@ -999,10 +1069,11 @@
 
         function renderAttendanceTable() {
             const tbody = document.getElementById("attendanceTableBody");
-            if(employees.length === 0) { tbody.innerHTML = `<tr><td colspan=\"7\" class=\"empty-state\">لا يوجد موظفون لجدولة الحضور.</td></tr>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="7" class="empty-state">لا يوجد موظفون في هذا القسم لجدولة الحضور.</td></tr>`; return; }
             const config = monthSettings[currentMonthKey];
             let html = "";
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 if(!attendance[currentMonthKey]) attendance[currentMonthKey] = {};
                 if(!attendance[currentMonthKey][emp.id]) attendance[currentMonthKey][emp.id] = { present: config.workingDays, absent: 0 };
                 const att = attendance[currentMonthKey][emp.id];
@@ -1012,7 +1083,7 @@
                 html += `
                     <tr>
                         <td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td>
-                        <td>${emp.department || '-'}</td>
+                        <td>${getDeptBadge(emp.department)}</td>
                         <td style="font-weight:700; color:var(--primary);">${totalWorking} يوماً</td>
                         <td><input type="number" style="width:90px; text-align:center; padding:6px;" id="inpPresent_${emp.id}" min="0" max="${totalWorking}" value="${att.present}"></td>
                         <td style="font-weight:700; color:var(--danger); font-size:1.1rem;">${absentDays} أيام</td>
@@ -1088,10 +1159,11 @@
 
         function renderPayrollTable() {
             const tbody = document.getElementById("payrollTableBody");
-            if(employees.length === 0) { tbody.innerHTML = `<tr><td colspan="8" class="empty-state">لا توجد بيانات مرتبات لعرضها.</td></tr>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-state">لا توجد بيانات مرتبات لعرضها بهذا القسم.</td></tr>`; return; }
             const config = monthSettings[currentMonthKey];
             let html = "";
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 const absenceDeduction = absentDays * dailyRate;
@@ -1115,6 +1187,7 @@
                 html += `
                     <tr>
                         <td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td>
+                        <td>${getDeptBadge(emp.department)}</td>
                         <td style="font-weight:600;">${formatCurrencyIraq(emp.salary)}</td>
                         <td style="color:var(--text-muted); font-size:0.85rem;">${formatCurrencyIraq(dailyRate)}/يوم</td>
                         <td style="color:var(--danger); font-weight:600;">${absenceDeduction > 0 ? '-' + formatCurrencyIraq(absenceDeduction) : '0 د.ع'}</td>
@@ -1131,10 +1204,11 @@
         function renderDisbursementTable() {
             const tbody = document.getElementById("disbursementTableBody");
             if(!tbody) return;
-            if(employees.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">لا يوجد موظفون مسجلون بالمستند لإتمام الصرف.</td></tr>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">لا يوجد موظفون مسجلون بهذا القسم لإتمام الصرف.</td></tr>`; return; }
             const config = monthSettings[currentMonthKey];
             let html = "";
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 const absenceDeduction = absentDays * dailyRate;
@@ -1153,9 +1227,9 @@
                 const isDisbursed = disbursements.find(d => d.empId === emp.id && d.monthKey === currentMonthKey);
                 
                 if(isDisbursed) {
-                    html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${emp.department || '-'}</td><td style="font-weight:700; color:var(--text-muted); text-decoration: line-through;">${formatCurrencyIraq(netSalary)}</td><td><span style="background:#d1fae5; color:#065f46; padding:5px 12px; border-radius:6px; font-weight:700; font-size:0.85rem;"><i class="fas fa-check-circle"></i> تم صرفه بنجاح</span></td><td><input type="date" value="${isDisbursed.date}" onchange="updateDisbursementDate('${isDisbursed.id}', this.value)" style="width:100%; padding:6px; border:2px solid var(--primary); border-radius:8px; text-align:center; font-weight:bold;"></td><td><button class="btn btn-sm btn-danger" onclick="cancelDisbursement('${isDisbursed.id}')"><i class="fas fa-undo"></i> تراجع وإلغاء</button></td></tr>`;
+                    html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${getDeptBadge(emp.department)}</td><td style="font-weight:700; color:var(--text-muted); text-decoration: line-through;">${formatCurrencyIraq(netSalary)}</td><td><span style="background:#d1fae5; color:#065f46; padding:5px 12px; border-radius:6px; font-weight:700; font-size:0.85rem;"><i class="fas fa-check-circle"></i> تم صرفه بنجاح</span></td><td><input type="date" value="${isDisbursed.date}" onchange="updateDisbursementDate('${isDisbursed.id}', this.value)" style="width:100%; padding:6px; border:2px solid var(--primary); border-radius:8px; text-align:center; font-weight:bold;"></td><td><button class="btn btn-sm btn-danger" onclick="cancelDisbursement('${isDisbursed.id}')"><i class="fas fa-undo"></i> تراجع وإلغاء</button></td></tr>`;
                 } else {
-                    html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${emp.department || '-'}</td><td style="font-weight:700; color:var(--success-hover); font-size:1.05rem;">${formatCurrencyIraq(netSalary)}</td><td><span style="background:#fef3c7; color:#92400e; padding:5px 12px; border-radius:6px; font-weight:700; font-size:0.85rem;"><i class="fas fa-clock"></i> في الانتظار</span></td><td>-</td><td><button class="btn btn-sm btn-success" onclick="executeSalaryDisbursement('${emp.id}', ${netSalary}, '${emp.name}')"><i class="fas fa-money-bill-wave"></i> تأكيد صرف الراتب</button></td></tr>`;
+                    html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${getDeptBadge(emp.department)}</td><td style="font-weight:700; color:var(--success-hover); font-size:1.05rem;">${formatCurrencyIraq(netSalary)}</td><td><span style="background:#fef3c7; color:#92400e; padding:5px 12px; border-radius:6px; font-weight:700; font-size:0.85rem;"><i class="fas fa-clock"></i> في الانتظار</span></td><td>-</td><td><button class="btn btn-sm btn-success" onclick="executeSalaryDisbursement('${emp.id}', ${netSalary}, '${emp.name}')"><i class="fas fa-money-bill-wave"></i> تأكيد صرف الراتب</button></td></tr>`;
                 }
             });
             tbody.innerHTML = html;
@@ -1178,12 +1252,14 @@
             }
         }
 
+        // يقوم بالصرف الجماعي لموظفي القسم المحدد فقط
         function disburseAllCurrentMonth() {
             const config = monthSettings[currentMonthKey];
             let counter = 0;
             const selectedDate = document.getElementById("disbursementDateInput").value || new Date().toISOString().split('T')[0];
+            const filteredEmps = getFilteredEmployees();
 
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const alreadyPaid = disbursements.find(d => d.empId === emp.id && d.monthKey === currentMonthKey);
                 if(!alreadyPaid) {
                     const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
@@ -1205,8 +1281,8 @@
                     counter++;
                 }
             });
-            if(counter > 0) { commitStorage(); recalculateWholeSystem(); showToast(`تم ترحيل وصرف مبالغ الرواتب لـ ${counter} موظف دفعة واحدة`, "success"); } 
-            else { showToast("كل موظفي هذا الشهر مسجل لهم صرف مسبقاً!", "warning"); }
+            if(counter > 0) { commitStorage(); recalculateWholeSystem(); showToast(`تم ترحيل وصرف مبالغ الرواتب لـ ${counter} موظف بالقسم الحالي`, "success"); } 
+            else { showToast("كل موظفي هذا القسم تم قيد الصرف المسبق لهم!", "warning"); }
         }
 
         function openFinancialActionModal(empId, empName, type, specificType = 'general') {
@@ -1256,8 +1332,15 @@
 
         function renderLogsTable() {
             const tbody = document.getElementById("logsTableBody");
-            const filtered = financialActions.filter(act => act.monthKey === currentMonthKey);
-            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">لم تسجل أي حركات مالية حركية لهذا الشهر.</td></tr>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            
+            // فلترة السجلات بحيث تعرض فقط ما يخص الموظفين المفلترين في القسم المحدد
+            const filtered = financialActions.filter(act => 
+                act.monthKey === currentMonthKey && 
+                filteredEmps.some(e => e.id === act.empId)
+            );
+            
+            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">لم تسجل أي حركات مالية لهذا القسم خلال هذا الشهر.</td></tr>`; return; }
             let html = "";
             filtered.forEach(act => {
                 const emp = employees.find(e => e.id === act.empId) || { name: 'موظف محذوف' };
@@ -1276,13 +1359,6 @@
             tbody.innerHTML = html;
         }
 
-        function removeFinancialAction(id) {
-            if(confirm("هل أنت متأكد من إلغاء الحركة المالية؟")) {
-                financialActions = financialActions.filter(act => act.id !== id);
-                commitStorage(); recalculateWholeSystem(); showToast("تم إلغاء الحركة بنجاح", "success");
-            }
-        }
-
         function renderReportsArea() {
             const config = monthSettings[currentMonthKey];
             const metaContainer = document.getElementById("reportMetadataSection");
@@ -1290,11 +1366,13 @@
             if (!metaContainer || !tbody) return;
 
             let holidayTexts = config.holidays && config.holidays.length > 0 ? config.holidays.map(h => `${h.name}`).join('، ') : "لا توجد عطل مقيدة";
-            metaContainer.innerHTML = `<div style="background:var(--gray-light); padding:15px; border-radius:10px; border:1px solid var(--border); font-size:0.9rem; line-height:1.6;"><strong>محددات جرد الشهر:</strong> صافي أيام العمل: <strong>${config.workingDays} يوماً</strong> | عطل الشهر: <span style="color:var(--danger); font-weight:600;">${holidayTexts}</span></div>`;
+            const deptLabel = currentDepartment === "all" ? "كافة الأقسام" : `قسم (${currentDepartment})`;
+            metaContainer.innerHTML = `<div style="background:var(--gray-light); padding:15px; border-radius:10px; border:1px solid var(--border); font-size:0.9rem; line-height:1.6;"><strong>محددات جرد التقرير للـ [ ${deptLabel} ]:</strong> صافي أيام العمل: <strong>${config.workingDays} يوماً</strong> | عطل الشهر: <span style="color:var(--danger); font-weight:600;">${holidayTexts}</span></div>`;
 
-            if(employees.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-state">لا يوجد موظفون لإنتاج التقرير.</td></tr>`; return; }
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-state">لا يوجد موظفون لإنتاج التقرير في هذا النطاق.</td></tr>`; return; }
             let html = "";
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 const absenceDeduction = absentDays * dailyRate;
@@ -1315,7 +1393,7 @@
                 const totalDeductions = dedSocial + dedItems + dedOther;
                 const netSalary = emp.salary - absenceDeduction + empBonus - totalDeductions - empAdvance;
 
-                html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${emp.department || '-'}</td><td>${formatCurrencyIraq(emp.salary)}</td><td>${absentDays}</td><td style="color:var(--success-hover);">${formatCurrencyIraq(empBonus)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedSocial)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedItems)}</td><td style="color:var(--warning-hover);">${formatCurrencyIraq(empAdvance)}</td><td style="font-weight:900; color:var(--success-hover); background:#f0fdf4;">${formatCurrencyIraq(netSalary)}</td></tr>`;
+                html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${getDeptBadge(emp.department)}</td><td>${formatCurrencyIraq(emp.salary)}</td><td>${absentDays}</td><td style="color:var(--success-hover);">${formatCurrencyIraq(empBonus)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedSocial)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedItems)}</td><td style="color:var(--warning-hover);">${formatCurrencyIraq(empAdvance)}</td><td style="font-weight:900; color:var(--success-hover); background:#f0fdf4;">${formatCurrencyIraq(netSalary)}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1328,8 +1406,15 @@
             
             if(!fromDate || !toDate) { return; }
 
-            const filtered = disbursements.filter(d => d.date >= fromDate && d.date <= toDate);
-            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-folder-open"></i> لا توجد أي قيود صرف مسجلة ضمن هذه التواريخ</td></tr>`; totalDisplay.textContent = "0 د.ع"; return; }
+            const filteredEmps = getFilteredEmployees();
+            // فلترة الوصولات المصروفة تبعا للتواريخ وتبعا لانتماء الموظف للقسم الحالي
+            const filtered = disbursements.filter(d => 
+                d.date >= fromDate && 
+                d.date <= toDate && 
+                filteredEmps.some(e => e.id === d.empId)
+            );
+            
+            if(filtered.length === 0) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-folder-open"></i> لا توجد أي قيود صرف مسجلة للقسم المحدد ضمن هذه التواريخ</td></tr>`; totalDisplay.textContent = "0 د.ع"; return; }
 
             let html = ""; let sumTotal = 0;
             filtered.forEach(d => {
@@ -1345,24 +1430,27 @@
         function printReport() {
             const year = document.getElementById("globalYear").value;
             const monthText = document.getElementById("globalMonth").options[document.getElementById("globalMonth").selectedIndex].text;
-            document.getElementById("printReportTitle").textContent = `تقرير ومسير الرواتب والحضور الشامل لشهر: ${monthText} لسنة ${year}`;
+            const deptText = currentDepartment === "all" ? "لكافة الأقسام" : `لقسم ${currentDepartment}`;
+            document.getElementById("printReportTitle").textContent = `تقرير ومسير الرواتب والحضور الشامل ${deptText} لشهر: ${monthText} لسنة ${year}`;
             document.getElementById("printReportMeta").textContent = `تاريخ الاستخراج للطباعة: ${new Date().toLocaleDateString('ar-IQ')}`;
             window.print();
         }
 
         function exportToCSV() {
-            if(employees.length === 0) return;
+            const filteredEmps = getFilteredEmployees();
+            if(filteredEmps.length === 0) return;
             const config = monthSettings[currentMonthKey];
             const year = document.getElementById("globalYear").value;
             const monthText = document.getElementById("globalMonth").options[document.getElementById("globalMonth").selectedIndex].text;
+            const deptText = currentDepartment === "all" ? "جميع الأقسام" : currentDepartment;
 
             let csvRows = [];
-            csvRows.push(`"تقرير كشف الرواتب - شهر: ${monthText} - سنة ${year}"`);
+            csvRows.push(`"تقرير كشف الرواتب - قسم: ${deptText} - شهر: ${monthText} - سنة ${year}"`);
             csvRows.push(`"أيام العمل المعتمدة: ${config.workingDays} يوماً"`);
             csvRows.push(""); 
             csvRows.push(["اسم الموظف", "القسم", "الراتب الأساسي", "أيام الغياب", "خصم الغياب", "استقطاع ضمان اجتماعي", "استقطاع ايتمات", "السلف/سحوبات", "إجمالي المكافآت", "صافي الراتب"].map(v => `"${v}"`).join(","));
 
-            employees.forEach(emp => {
+            filteredEmps.forEach(emp => {
                 const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 const absenceDeduction = absentDays * dailyRate;
@@ -1390,7 +1478,7 @@
             const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvString], { type: "text/csv;charset=utf-8;" });
             const link = document.createElement("a");
             link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", `تقرير_الرواتب_${year}_${document.getElementById("globalMonth").value}.csv`);
+            link.setAttribute("download", `تقرير_الرواتب_${deptText}_${year}_${document.getElementById("globalMonth").value}.csv`);
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
