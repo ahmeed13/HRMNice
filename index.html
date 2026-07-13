@@ -24,58 +24,32 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body { background: #f1f5f9; color: var(--text-main); min-height: 100vh; }
 
-        /* ====== شاشة القفل وتسجيل الدخول ====== */
         #loginOverlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: linear-gradient(135deg, var(--dark) 0%, #1e1b4b 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
+            display: flex; justify-content: center; align-items: center; z-index: 99999;
         }
         .login-box {
-            background: white;
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
-            text-align: center;
-            width: 90%;
-            max-width: 400px;
-            animation: fadeIn 0.4s ease;
+            background: white; padding: 40px 30px; border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); text-align: center;
+            width: 90%; max-width: 400px; animation: fadeIn 0.4s ease;
         }
         .login-box h2 { color: var(--dark); margin-bottom: 10px; font-weight: 900; }
         .login-box p { color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem; }
         .login-box input {
-            width: 100%;
-            text-align: center;
-            font-size: 2rem;
-            letter-spacing: 8px;
-            padding: 15px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.3s;
-            font-weight: 700;
+            width: 100%; text-align: center; font-size: 2rem; letter-spacing: 8px;
+            padding: 15px; border: 2px solid var(--border); border-radius: 12px;
+            margin-bottom: 20px; outline: none; transition: all 0.3s; font-weight: 700;
         }
         .login-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79,70,229,0.1); }
         .login-box button {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
+            width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 12px;
+            background: var(--primary); color: white; border: none; font-weight: 700;
+            cursor: pointer; transition: 0.2s;
         }
         .login-box button:hover { background: var(--primary-hover); }
         #loginError { color: var(--danger); margin-top: 15px; font-weight: 700; display: none; }
 
-        /* ====== إخفاء محتوى الموقع الأساسي حتى الدخول ====== */
         #mainAppContent { display: none; padding-bottom: 60px; }
 
         header { background: linear-gradient(135deg, var(--dark) 0%, #1e1b4b 100%); color: white; padding: 30px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -170,14 +144,7 @@
             th { background: #eee !important; color: black; }
         }
         
-        /* شارات الأقسام المميزة */
-        .dept-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 800;
-        }
+        .dept-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; }
         .dept-nicecurl { background-color: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
         .dept-restaurant { background-color: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
     </style>
@@ -287,6 +254,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Month Settings (unchanged) -->
             <div id="tab-month-settings" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -333,6 +301,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Attendance -->
             <div id="tab-attendance" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -357,6 +326,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Payroll -->
             <div id="tab-payroll" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -369,7 +339,7 @@
                                     <th>الموظف</th>
                                     <th>القسم</th>
                                     <th>الأساسي (د.ع)</th>
-                                    <th>الراتب اليومي</th>
+                                    <th>الراتب اليومي (على 30 يوم)</th>
                                     <th>غياب</th>
                                     <th style="color:#ef4444;">ضمان اجتماعي (-)</th>
                                     <th style="color:#ef4444;">خصم ايتمات (-)</th>
@@ -383,6 +353,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Disbursement -->
             <div id="tab-disbursement" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -411,8 +382,8 @@
                         </table>
                     </div>
                 </div>
-
                 <div class="card">
+                    <!-- ... Report filters remain ... -->
                     <div class="card-header">
                         <div class="card-title"><i class="fas fa-calendar-alt"></i> تقرير محرك الرواتب المصروفة بناءً على نطاق التواريخ</div>
                     </div>
@@ -451,6 +422,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Logs -->
             <div id="tab-logs" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -474,6 +446,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Reports -->
             <div id="tab-reports" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -490,16 +463,14 @@
                             <h3 id="printReportTitle">تقرير مسيرات الرواتب لشهر</h3>
                             <p id="printReportMeta"></p>
                         </div>
-                        
                         <div style="margin-bottom: 20px;" id="reportMetadataSection"></div>
-                        
                         <div class="table-responsive">
                             <table id="reportMainTable">
                                 <thead>
                                     <tr>
                                         <th>اسم الموظف</th>
                                         <th>القسم</th>
-                                        <th>الأساسي</th>
+                                        <th>الأساسي الفعلي</th>
                                         <th>الغياب</th>
                                         <th>مكافآت</th>
                                         <th style="color:#ef4444;">ضمان اجتماعي</th>
@@ -518,6 +489,7 @@
         </div>
     </div> 
     
+    <!-- Modal: Employee Form -->
     <div class="modal-overlay" id="employeeModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -532,10 +504,13 @@
                         <input type="text" id="empFormName" required>
                     </div>
                     <div class="form-group">
+                        <label>تاريخ المباشرة بالعمل *</label>
+                        <input type="date" id="empFormStartDate" required>
+                    </div>
+                    <div class="form-group">
                         <label>الراتب الشهري الأساسي (بالدينار العراقي) *</label>
                         <input type="number" id="empFormSalary" required min="0" step="250">
                     </div>
-                    
                     <div class="form-group">
                         <label>القسم الإداري *</label>
                         <select id="empFormDepartment" required>
@@ -544,7 +519,6 @@
                             <option value="مطعم 88">مطعم 88</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label>رقم هاتف الموظف:</label>
                         <input type="text" id="empFormPhone">
@@ -555,8 +529,35 @@
         </div>
     </div>
 
+    <!-- Modal: Termination (New) -->
+    <div class="modal-overlay" id="terminationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="termModalTitle">إنهاء خدمات موظف</h3>
+                <button class="close-modal" onclick="closeModal('terminationModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="termEmpId">
+                <div class="form-group">
+                    <label>اسم الموظف:</label>
+                    <input type="text" id="termEmpName" readonly disabled>
+                </div>
+                <div class="form-group">
+                    <label>تاريخ إنهاء الخدمات (آخر يوم عمل):</label>
+                    <input type="date" id="termDate" required>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9rem; color: var(--danger); font-weight: bold;">
+                    <i class="fas fa-exclamation-circle"></i> ملاحظة: سيتم إخفاء هذا الموظف عن مسيرات الرواتب للأشهر التي تلي تاريخ الإنهاء.
+                </div>
+                <button class="btn btn-danger" style="width: 100%; margin-top: 15px;" onclick="executeTermination()"><i class="fas fa-user-slash"></i> تأكيد إنهاء الخدمات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Financial Actions -->
     <div class="modal-overlay" id="financialActionModal">
         <div class="modal-content">
+            <!-- (Unchanged internal content) -->
             <div class="modal-header">
                 <h3 id="faModalTitle">قيد حركة مالية جديدة</h3>
                 <button class="close-modal" onclick="closeModal('financialActionModal')"><i class="fas fa-times"></i></button>
@@ -595,8 +596,10 @@
         </div>
     </div>
 
+    <!-- Modal: Absence -->
     <div class="modal-overlay" id="absenceModal">
         <div class="modal-content">
+            <!-- (Unchanged) -->
             <div class="modal-header">
                 <h3 id="absenceModalTitle">سجل غيابات الموظف</h3>
                 <button class="close-modal" onclick="closeModal('absenceModal')"><i class="fas fa-times"></i></button>
@@ -632,6 +635,7 @@
         </div>
     </div>
 
+    <!-- Modal: Records -->
     <div class="modal-overlay" id="empRecordsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -662,16 +666,11 @@
     <script>
         const GOOGLE_WEB_APP_URL = "https://script.google.com/a/macros/alayen.edu.iq/s/AKfycbw3yipeLNam1TwoYYvIgj5Stvf9Xw35KdEQVGgQuX5vSOazlMP6qVWT3P9tRhWRmgIeOQ/exec"; 
 
-        // ================= دوال تسجيل الدخول والحماية =================
         document.addEventListener("DOMContentLoaded", () => {
-            if (sessionStorage.getItem("admin_logged_in") === "true") {
-                unlockSystem();
-            }
+            if (sessionStorage.getItem("admin_logged_in") === "true") { unlockSystem(); }
         });
 
-        function handleLoginKeyPress(e) {
-            if (e.key === "Enter") loginToSystem();
-        }
+        function handleLoginKeyPress(e) { if (e.key === "Enter") loginToSystem(); }
 
         function loginToSystem() {
             const pass = document.getElementById("adminPassword").value;
@@ -687,11 +686,9 @@
         function unlockSystem() {
             document.getElementById("loginOverlay").style.display = "none";
             document.getElementById("mainAppContent").style.display = "block";
-            
             initializeDefaultDates();
             loadFromGoogleSheet();
         }
-        // ===============================================================
 
         let employees = [];
         let monthSettings = {};
@@ -701,7 +698,7 @@
         let absenceRecords = []; 
         let itemsRecords = []; 
         let currentMonthKey = ""; 
-        let currentDepartment = "all"; // المتغير الإداري لتخزين القسم المحدد حالياً
+        let currentDepartment = "all";
 
         function initializeDefaultDates() {
             const today = new Date();
@@ -752,6 +749,37 @@
             }
         }
 
+        // --- دالة مساعدة لحساب الراتب بناءً على 30 يوماً وتاريخ المباشرة/الإنهاء ---
+        function getEmployeeSalaryDetails(emp, monthKey) {
+            const dailyRate = emp.salary / 30; // الحساب الثابت على 30 يوماً
+            let baseSalary = emp.salary;
+            const [year, month] = monthKey.split('-').map(Number);
+            
+            let startDay = 1;
+            let endDay = 30;
+
+            if (emp.startDate) {
+                const sd = new Date(emp.startDate);
+                if (sd.getFullYear() === year && sd.getMonth() === month) {
+                    startDay = Math.min(sd.getDate(), 30);
+                }
+            }
+
+            if (emp.terminationDate) {
+                const td = new Date(emp.terminationDate);
+                if (td.getFullYear() === year && td.getMonth() === month) {
+                    endDay = Math.min(td.getDate(), 30);
+                }
+            }
+
+            let activeDays = Math.max(0, endDay - startDay + 1);
+            if (activeDays < 30) {
+                baseSalary = dailyRate * activeDays;
+            }
+
+            return { dailyRate, baseSalary, activeDays };
+        }
+
         async function commitStorage() {
             monthSettings._absenceRecords = absenceRecords;
             monthSettings._disbursements = disbursements;
@@ -766,10 +794,10 @@
             updateSyncIndicator(false, "جاري الرفع للحفظ في جوجل شيت...");
             
             const config = monthSettings[currentMonthKey] || { workingDays: 30 };
-            const currentMonthRecords = employees.map(emp => {
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+            const currentMonthRecords = getFilteredEmployees().map(emp => {
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * dailyRate;
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empDeduction = 0, empAdvance = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -782,11 +810,11 @@
                 let dedItems = Math.max(0, totalItemsAmount - 50000); 
                 empDeduction += dedItems;
 
-                const netSalary = Math.round(emp.salary - absenceDeduction + empBonus - empDeduction - empAdvance);
+                const netSalary = Math.round(salaryDetails.baseSalary - absenceDeduction + empBonus - empDeduction - empAdvance);
                 
                 return {
                     id: emp.id, name: emp.name, department: emp.department || "-", phone: emp.phone || "-",
-                    salary: emp.salary, present: config.workingDays - absentDays, absent: absentDays,
+                    salary: salaryDetails.baseSalary, present: config.workingDays - absentDays, absent: absentDays,
                     absenceDeduction: Math.round(absenceDeduction), bonus: empBonus,
                     deduction: empDeduction, advance: empAdvance, netSalary: netSalary
                 };
@@ -836,8 +864,6 @@
             const deptSelect = document.getElementById("globalDepartment");
             if(!deptSelect) return;
             const previousSelection = deptSelect.value || "all";
-            
-            // التأكد من تضمين الأقسام الافتراضية مع أي أقسام أخرى قد تضاف مستقبلاً
             const departments = [...new Set(["نايس كيرل", "مطعم 88", ...employees.map(e => e.department).filter(Boolean)])];
             
             let html = '<option value="all">كافة الموظفين (كل الأقسام)</option>';
@@ -861,10 +887,28 @@
             recalculateWholeSystem();
         }
 
-        // دالة مساعدة لجلب الموظفين المفلترين حسب القسم المختار حالياً
+        // تصفية الموظفين حسب القسم وحسب تاريخ المباشرة وتاريخ إنهاء الخدمات
         function getFilteredEmployees() {
-            if (currentDepartment === "all") return employees;
-            return employees.filter(emp => emp.department === currentDepartment);
+            let emps = currentDepartment === "all" ? employees : employees.filter(emp => emp.department === currentDepartment);
+            
+            const [year, month] = currentMonthKey.split('-').map(Number);
+            return emps.filter(emp => {
+                // استبعاد من تاريخ مباشرته أحدث من الشهر المحدد
+                if (emp.startDate) {
+                    const sd = new Date(emp.startDate);
+                    if (sd.getFullYear() > year || (sd.getFullYear() === year && sd.getMonth() > month)) {
+                        return false; 
+                    }
+                }
+                // استبعاد من تاريخ إنهاء خدماته أقدم من الشهر المحدد (يشطب من الأشهر القادمة)
+                if (emp.terminationDate) {
+                    const td = new Date(emp.terminationDate);
+                    if (td.getFullYear() < year || (td.getFullYear() === year && td.getMonth() < month)) {
+                        return false; 
+                    }
+                }
+                return true;
+            });
         }
 
         function getDeptBadge(deptName) {
@@ -901,7 +945,6 @@
             monthSettings[currentMonthKey].holidays.push({ date: hDate, name: hName });
             if(monthSettings[currentMonthKey].workingDays > 1) monthSettings[currentMonthKey].workingDays--;
             commitStorage(); refreshMonthSettingsUI(); recalculateWholeSystem();
-            document.getElementById("holidayDate").value = ""; document.getElementById("holidayName").value = "";
             showToast("تم إدراج العطلة وتحديث أيام العمل", "success");
         }
 
@@ -944,8 +987,8 @@
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
                 totalPresent += att.present; totalAbsent += absentDays;
 
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
-                const absenceDeduction = absentDays * dailyRate;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empDeduction = 0, empAdvance = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -957,7 +1000,7 @@
                 let totalItemsAmount = itemsRecords.filter(i => i.empId === emp.id && i.monthKey === currentMonthKey).reduce((s, i) => s + i.amount, 0);
                 empDeduction += Math.max(0, totalItemsAmount - 50000);
 
-                const net = emp.salary - absenceDeduction + empBonus - empDeduction - empAdvance;
+                const net = salaryDetails.baseSalary - absenceDeduction + empBonus - empDeduction - empAdvance;
                 totalNetPayroll += net;
             });
 
@@ -974,27 +1017,39 @@
             filteredEmps.forEach(emp => {
                 const att = attendance[currentMonthKey]?.[emp.id] || { present: monthSettings[currentMonthKey].workingDays };
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 
+                let terminationBadge = "";
+                if(emp.terminationDate) {
+                    const td = new Date(emp.terminationDate);
+                    const [year, month] = currentMonthKey.split('-').map(Number);
+                    if (td.getFullYear() === year && td.getMonth() === month) {
+                        terminationBadge = `<span style="display:inline-block; margin-top:5px; background:#fee2e2; color:#b91c1c; padding:3px 8px; border-radius:6px; font-size:0.8rem;"><i class="fas fa-exclamation-triangle"></i> خدمات منهية بهذا الشهر</span>`;
+                    }
+                }
+
                 html += `
                     <div class="emp-card">
                         <div class="emp-info-main">
                             <div class="emp-avatar">${emp.name.charAt(0)}</div>
                             <div class="emp-details">
                                 <h4>${emp.name}</h4>
-                                <p><i class="fas fa-briefcase"></i> القسم: ${getDeptBadge(emp.department)} | الهاتف: ${emp.phone || 'غير مسجل'}</p>
+                                <p><i class="fas fa-briefcase"></i> القسم: ${getDeptBadge(emp.department)}</p>
+                                ${terminationBadge}
                             </div>
                         </div>
                         <div class="emp-stats-quick">
-                            <div>الراتب: <strong>${formatCurrencyIraq(emp.salary)}</strong></div>
+                            <div>الراتب لهذا الشهر: <strong>${formatCurrencyIraq(salaryDetails.baseSalary)}</strong></div>
                             <div>حضور/غياب: <strong style="color:var(--success-hover);">${att.present}</strong> / <strong style="color:var(--danger);">${absentDays}</strong></div>
                         </div>
                         <div class="emp-actions">
                             <button class="btn btn-sm btn-primary" onclick="editEmployee('${emp.id}')" title="تعديل"><i class="fas fa-edit"></i></button>
-                            <button class="btn btn-sm btn-success" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'bonus')"><i class="fas fa-gift"></i> مكافأة</button>
-                            <button class="btn btn-sm btn-danger" style="background:#e11d48;" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'deduction', 'social_security')"><i class="fas fa-user-shield"></i> ضمان</button>
-                            <button class="btn btn-sm btn-danger" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'deduction', 'general')"><i class="fas fa-minus-circle"></i> خصم عام</button>
-                            <button class="btn btn-sm btn-warning" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'advance', 'advance_salary')"><i class="fas fa-hand-holding-usd"></i> سحب</button>
-                            <button class="btn btn-sm btn-secondary" style="background-color:#0f172a;" onclick="openEmpRecordsModal('${emp.id}', '${emp.name}')"><i class="fas fa-list"></i> إدارة سجلاته</button>
+                            <button class="btn btn-sm btn-success" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'bonus')"><i class="fas fa-gift"></i></button>
+                            <button class="btn btn-sm btn-danger" style="background:#e11d48;" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'deduction', 'social_security')"><i class="fas fa-user-shield"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'deduction', 'general')"><i class="fas fa-minus-circle"></i></button>
+                            <button class="btn btn-sm btn-warning" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'advance', 'advance_salary')"><i class="fas fa-hand-holding-usd"></i></button>
+                            <button class="btn btn-sm btn-secondary" style="background-color:#0f172a;" onclick="openEmpRecordsModal('${emp.id}', '${emp.name}')"><i class="fas fa-list"></i></button>
+                            <button class="btn btn-sm btn-danger" style="background-color:#475569;" onclick="openTerminationModal('${emp.id}', '${emp.name}')" title="إنهاء خدمات"><i class="fas fa-user-slash"></i></button>
                         </div>
                     </div>
                 `;
@@ -1009,12 +1064,17 @@
             const salary = parseFloat(document.getElementById("empFormSalary").value);
             const department = document.getElementById("empFormDepartment").value;
             const phone = document.getElementById("empFormPhone").value.trim();
+            const startDate = document.getElementById("empFormStartDate").value;
 
             if(id) {
                 const index = employees.findIndex(emp => emp.id === id);
-                if(index !== -1) { employees[index] = { ...employees[index], name, salary, department, phone }; showToast("تم تحديث وحفظ سجل الموظف", "success"); }
+                if(index !== -1) { 
+                    employees[index] = { ...employees[index], name, salary, department, phone, startDate: startDate || employees[index].startDate }; 
+                    showToast("تم تحديث وحفظ سجل الموظف", "success"); 
+                }
             } else {
-                employees.push({ id: 'emp_' + Date.now(), name, salary, department, phone }); showToast("تم إدراج الموظف الجديد بنجاح", "success");
+                employees.push({ id: 'emp_' + Date.now(), name, salary, department, phone, startDate, terminationDate: null }); 
+                showToast("تم إدراج الموظف الجديد بنجاح", "success");
             }
             commitStorage(); closeModal('employeeModal'); recalculateWholeSystem();
         }
@@ -1025,10 +1085,33 @@
             document.getElementById("employeeModalTitle").textContent = "تعديل سجل بيانات الموظف";
             document.getElementById("empFormId").value = emp.id;
             document.getElementById("empFormName").value = emp.name;
+            document.getElementById("empFormStartDate").value = emp.startDate || "";
             document.getElementById("empFormSalary").value = emp.salary;
             document.getElementById("empFormDepartment").value = emp.department || "";
             document.getElementById("empFormPhone").value = emp.phone || "";
             openModal('employeeModal');
+        }
+
+        function openTerminationModal(empId, empName) {
+            document.getElementById("termEmpId").value = empId;
+            document.getElementById("termEmpName").value = empName;
+            document.getElementById("termDate").value = new Date().toISOString().split('T')[0];
+            openModal('terminationModal');
+        }
+
+        function executeTermination() {
+            const empId = document.getElementById("termEmpId").value;
+            const termDate = document.getElementById("termDate").value;
+            if(!termDate) return showToast("الرجاء تحديد تاريخ الإنهاء", "error");
+            
+            const emp = employees.find(e => e.id === empId);
+            if(emp) {
+                emp.terminationDate = termDate;
+                commitStorage();
+                closeModal('terminationModal');
+                recalculateWholeSystem();
+                showToast("تم إنهاء خدمات الموظف بنجاح", "success");
+            }
         }
 
         function openAbsenceModal(empId, empName) {
@@ -1161,12 +1244,11 @@
             const tbody = document.getElementById("payrollTableBody");
             const filteredEmps = getFilteredEmployees();
             if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-state">لا توجد بيانات مرتبات لعرضها بهذا القسم.</td></tr>`; return; }
-            const config = monthSettings[currentMonthKey];
             let html = "";
             filteredEmps.forEach(emp => {
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * dailyRate;
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empAdvance = 0, dedSocial = 0, dedOther = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -1182,14 +1264,14 @@
                 let dedItems = Math.max(0, totalItemsAmount - 50000); 
 
                 const totalDeductions = dedSocial + dedItems + dedOther;
-                const netSalary = emp.salary - absenceDeduction + empBonus - totalDeductions - empAdvance;
+                const netSalary = salaryDetails.baseSalary - absenceDeduction + empBonus - totalDeductions - empAdvance;
 
                 html += `
                     <tr>
                         <td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td>
                         <td>${getDeptBadge(emp.department)}</td>
-                        <td style="font-weight:600;">${formatCurrencyIraq(emp.salary)}</td>
-                        <td style="color:var(--text-muted); font-size:0.85rem;">${formatCurrencyIraq(dailyRate)}/يوم</td>
+                        <td style="font-weight:600;">${formatCurrencyIraq(salaryDetails.baseSalary)}</td>
+                        <td style="color:var(--text-muted); font-size:0.85rem;">${formatCurrencyIraq(salaryDetails.dailyRate)}/يوم</td>
                         <td style="color:var(--danger); font-weight:600;">${absenceDeduction > 0 ? '-' + formatCurrencyIraq(absenceDeduction) : '0 د.ع'}</td>
                         <td style="color:var(--danger); font-weight:600;">${dedSocial > 0 ? '-' + formatCurrencyIraq(dedSocial) : '0 د.ع'}</td>
                         <td style="color:var(--danger); font-weight:600;">${dedItems > 0 ? '-' + formatCurrencyIraq(dedItems) : '0 د.ع'}</td>
@@ -1206,12 +1288,11 @@
             if(!tbody) return;
             const filteredEmps = getFilteredEmployees();
             if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="empty-state">لا يوجد موظفون مسجلون بهذا القسم لإتمام الصرف.</td></tr>`; return; }
-            const config = monthSettings[currentMonthKey];
             let html = "";
             filteredEmps.forEach(emp => {
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * dailyRate;
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empDeduction = 0, empAdvance = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -1223,7 +1304,7 @@
                 let totalItemsAmount = itemsRecords.filter(i => i.empId === emp.id && i.monthKey === currentMonthKey).reduce((s, i) => s + i.amount, 0);
                 empDeduction += Math.max(0, totalItemsAmount - 50000); 
 
-                const netSalary = Math.round(emp.salary - absenceDeduction + empBonus - empDeduction - empAdvance);
+                const netSalary = Math.round(salaryDetails.baseSalary - absenceDeduction + empBonus - empDeduction - empAdvance);
                 const isDisbursed = disbursements.find(d => d.empId === emp.id && d.monthKey === currentMonthKey);
                 
                 if(isDisbursed) {
@@ -1252,9 +1333,7 @@
             }
         }
 
-        // يقوم بالصرف الجماعي لموظفي القسم المحدد فقط
         function disburseAllCurrentMonth() {
-            const config = monthSettings[currentMonthKey];
             let counter = 0;
             const selectedDate = document.getElementById("disbursementDateInput").value || new Date().toISOString().split('T')[0];
             const filteredEmps = getFilteredEmployees();
@@ -1262,9 +1341,9 @@
             filteredEmps.forEach(emp => {
                 const alreadyPaid = disbursements.find(d => d.empId === emp.id && d.monthKey === currentMonthKey);
                 if(!alreadyPaid) {
-                    const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+                    const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                     const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                    const absenceDeduction = absentDays * dailyRate;
+                    const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                     let empBonus = 0, empDeduction = 0, empAdvance = 0;
                     financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -1276,7 +1355,7 @@
                     let totalItemsAmount = itemsRecords.filter(i => i.empId === emp.id && i.monthKey === currentMonthKey).reduce((s, i) => s + i.amount, 0);
                     empDeduction += Math.max(0, totalItemsAmount - 50000); 
 
-                    const netSalary = Math.round(emp.salary - absenceDeduction + empBonus - empDeduction - empAdvance);
+                    const netSalary = Math.round(salaryDetails.baseSalary - absenceDeduction + empBonus - empDeduction - empAdvance);
                     disbursements.push({ id: 'disb_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4), empId: emp.id, empName: emp.name, monthKey: currentMonthKey, amount: netSalary, date: selectedDate });
                     counter++;
                 }
@@ -1334,7 +1413,6 @@
             const tbody = document.getElementById("logsTableBody");
             const filteredEmps = getFilteredEmployees();
             
-            // فلترة السجلات بحيث تعرض فقط ما يخص الموظفين المفلترين في القسم المحدد
             const filtered = financialActions.filter(act => 
                 act.monthKey === currentMonthKey && 
                 filteredEmps.some(e => e.id === act.empId)
@@ -1367,15 +1445,15 @@
 
             let holidayTexts = config.holidays && config.holidays.length > 0 ? config.holidays.map(h => `${h.name}`).join('، ') : "لا توجد عطل مقيدة";
             const deptLabel = currentDepartment === "all" ? "كافة الأقسام" : `قسم (${currentDepartment})`;
-            metaContainer.innerHTML = `<div style="background:var(--gray-light); padding:15px; border-radius:10px; border:1px solid var(--border); font-size:0.9rem; line-height:1.6;"><strong>محددات جرد التقرير للـ [ ${deptLabel} ]:</strong> صافي أيام العمل: <strong>${config.workingDays} يوماً</strong> | عطل الشهر: <span style="color:var(--danger); font-weight:600;">${holidayTexts}</span></div>`;
+            metaContainer.innerHTML = `<div style="background:var(--gray-light); padding:15px; border-radius:10px; border:1px solid var(--border); font-size:0.9rem; line-height:1.6;"><strong>محددات جرد التقرير للـ [ ${deptLabel} ]:</strong> صافي أيام العمل المعتمدة: <strong>${config.workingDays} يوماً</strong> | عطل الشهر: <span style="color:var(--danger); font-weight:600;">${holidayTexts}</span> | حساب القسط اليومي ثابت على 30 يوماً</div>`;
 
             const filteredEmps = getFilteredEmployees();
             if(filteredEmps.length === 0) { tbody.innerHTML = `<tr><td colspan="9" class="empty-state">لا يوجد موظفون لإنتاج التقرير في هذا النطاق.</td></tr>`; return; }
             let html = "";
             filteredEmps.forEach(emp => {
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * dailyRate;
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empAdvance = 0, dedSocial = 0, dedOther = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -1391,9 +1469,9 @@
                 let dedItems = Math.max(0, totalItemsAmount - 50000); 
 
                 const totalDeductions = dedSocial + dedItems + dedOther;
-                const netSalary = emp.salary - absenceDeduction + empBonus - totalDeductions - empAdvance;
+                const netSalary = salaryDetails.baseSalary - absenceDeduction + empBonus - totalDeductions - empAdvance;
 
-                html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${getDeptBadge(emp.department)}</td><td>${formatCurrencyIraq(emp.salary)}</td><td>${absentDays}</td><td style="color:var(--success-hover);">${formatCurrencyIraq(empBonus)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedSocial)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedItems)}</td><td style="color:var(--warning-hover);">${formatCurrencyIraq(empAdvance)}</td><td style="font-weight:900; color:var(--success-hover); background:#f0fdf4;">${formatCurrencyIraq(netSalary)}</td></tr>`;
+                html += `<tr><td style="font-weight:700; color:var(--dark); text-align:right;">${emp.name}</td><td>${getDeptBadge(emp.department)}</td><td>${formatCurrencyIraq(salaryDetails.baseSalary)}</td><td>${absentDays}</td><td style="color:var(--success-hover);">${formatCurrencyIraq(empBonus)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedSocial)}</td><td style="color:var(--danger);">${formatCurrencyIraq(dedItems)}</td><td style="color:var(--warning-hover);">${formatCurrencyIraq(empAdvance)}</td><td style="font-weight:900; color:var(--success-hover); background:#f0fdf4;">${formatCurrencyIraq(netSalary)}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -1407,7 +1485,6 @@
             if(!fromDate || !toDate) { return; }
 
             const filteredEmps = getFilteredEmployees();
-            // فلترة الوصولات المصروفة تبعا للتواريخ وتبعا لانتماء الموظف للقسم الحالي
             const filtered = disbursements.filter(d => 
                 d.date >= fromDate && 
                 d.date <= toDate && 
@@ -1446,14 +1523,14 @@
 
             let csvRows = [];
             csvRows.push(`"تقرير كشف الرواتب - قسم: ${deptText} - شهر: ${monthText} - سنة ${year}"`);
-            csvRows.push(`"أيام العمل المعتمدة: ${config.workingDays} يوماً"`);
+            csvRows.push(`"أيام العمل المعتمدة: ${config.workingDays} يوماً (الاستقطاع محسوب على 30 يوماً)"`);
             csvRows.push(""); 
-            csvRows.push(["اسم الموظف", "القسم", "الراتب الأساسي", "أيام الغياب", "خصم الغياب", "استقطاع ضمان اجتماعي", "استقطاع ايتمات", "السلف/سحوبات", "إجمالي المكافآت", "صافي الراتب"].map(v => `"${v}"`).join(","));
+            csvRows.push(["اسم الموظف", "القسم", "الراتب الأساسي الفعلي", "أيام الغياب", "خصم الغياب", "استقطاع ضمان اجتماعي", "استقطاع ايتمات", "السلف/سحوبات", "إجمالي المكافآت", "صافي الراتب"].map(v => `"${v}"`).join(","));
 
             filteredEmps.forEach(emp => {
-                const dailyRate = config.workingDays > 0 ? (emp.salary / config.workingDays) : 0;
+                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
                 const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * dailyRate;
+                const absenceDeduction = absentDays * salaryDetails.dailyRate;
 
                 let empBonus = 0, empAdvance = 0, dedSocial = 0, dedOther = 0;
                 financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
@@ -1469,9 +1546,9 @@
                 let dedItems = Math.max(0, totalItemsAmount - 50000); 
 
                 const totalDeductions = dedSocial + dedItems + dedOther;
-                const netSalary = emp.salary - absenceDeduction + empBonus - totalDeductions - empAdvance;
+                const netSalary = salaryDetails.baseSalary - absenceDeduction + empBonus - totalDeductions - empAdvance;
                 
-                csvRows.push([emp.name, emp.department || "-", emp.salary, absentDays, absenceDeduction, dedSocial, dedItems, empAdvance, empBonus, netSalary].map(v => `"${v}"`).join(","));
+                csvRows.push([emp.name, emp.department || "-", salaryDetails.baseSalary, absentDays, absenceDeduction, dedSocial, dedItems, empAdvance, empBonus, netSalary].map(v => `"${v}"`).join(","));
             });
 
             const csvString = csvRows.join("\n");
