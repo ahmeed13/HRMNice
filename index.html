@@ -254,6 +254,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Month Settings (unchanged) -->
             <div id="tab-month-settings" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -300,6 +301,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Attendance -->
             <div id="tab-attendance" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -324,6 +326,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Payroll -->
             <div id="tab-payroll" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -350,6 +353,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Disbursement -->
             <div id="tab-disbursement" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -379,6 +383,7 @@
                     </div>
                 </div>
                 <div class="card">
+                    <!-- ... Report filters remain ... -->
                     <div class="card-header">
                         <div class="card-title"><i class="fas fa-calendar-alt"></i> تقرير محرك الرواتب المصروفة بناءً على نطاق التواريخ</div>
                     </div>
@@ -417,6 +422,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Logs -->
             <div id="tab-logs" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -440,6 +446,7 @@
                 </div>
             </div>
 
+            <!-- Tab: Reports -->
             <div id="tab-reports" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -482,6 +489,7 @@
         </div>
     </div> 
     
+    <!-- Modal: Employee Form -->
     <div class="modal-overlay" id="employeeModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -521,6 +529,7 @@
         </div>
     </div>
 
+    <!-- Modal: Termination (New) -->
     <div class="modal-overlay" id="terminationModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -545,8 +554,10 @@
         </div>
     </div>
 
+    <!-- Modal: Financial Actions -->
     <div class="modal-overlay" id="financialActionModal">
         <div class="modal-content">
+            <!-- (Unchanged internal content) -->
             <div class="modal-header">
                 <h3 id="faModalTitle">قيد حركة مالية جديدة</h3>
                 <button class="close-modal" onclick="closeModal('financialActionModal')"><i class="fas fa-times"></i></button>
@@ -585,8 +596,10 @@
         </div>
     </div>
 
+    <!-- Modal: Absence -->
     <div class="modal-overlay" id="absenceModal">
         <div class="modal-content">
+            <!-- (Unchanged) -->
             <div class="modal-header">
                 <h3 id="absenceModalTitle">سجل غيابات الموظف</h3>
                 <button class="close-modal" onclick="closeModal('absenceModal')"><i class="fas fa-times"></i></button>
@@ -622,6 +635,7 @@
         </div>
     </div>
 
+    <!-- Modal: Records -->
     <div class="modal-overlay" id="empRecordsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -704,8 +718,7 @@
             updateSyncIndicator(false, "جاري جلب البيانات من جوجل شيت...");
             try {
                 if (!GOOGLE_WEB_APP_URL) return;
-                const noCacheUrl = GOOGLE_WEB_APP_URL + "?t=" + new Date().getTime();
-                const response = await fetch(noCacheUrl);
+                const response = await fetch(GOOGLE_WEB_APP_URL);
                 const data = await response.json();
                 
                 if (data.employees) employees = data.employees;
@@ -729,15 +742,16 @@
                 if(localStorage.getItem("smart_sys_month_settings")) {
                     monthSettings = JSON.parse(localStorage.getItem("smart_sys_month_settings"));
                     if (monthSettings._absenceRecords) absenceRecords = monthSettings._absenceRecords;
-                    if (monthSettings._disbursements) disbursements = monthSettings._disbursements || [];
-                    if (monthSettings._itemsRecords) itemsRecords = monthSettings._itemsRecords || [];
+                    if (monthSettings._disbursements) disbursements = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._disbursements || [];
+                    if (monthSettings._itemsRecords) itemsRecords = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._itemsRecords || [];
                 }
                 onGlobalMonthYearChange();
             }
         }
 
+        // --- دالة مساعدة لحساب الراتب بناءً على 30 يوماً وتاريخ المباشرة/الإنهاء ---
         function getEmployeeSalaryDetails(emp, monthKey) {
-            const dailyRate = emp.salary / 30; 
+            const dailyRate = emp.salary / 30; // الحساب الثابت على 30 يوماً
             let baseSalary = emp.salary;
             const [year, month] = monthKey.split('-').map(Number);
             
@@ -771,7 +785,6 @@
             monthSettings._disbursements = disbursements;
             monthSettings._itemsRecords = itemsRecords; 
 
-            // 1. الحفظ في التخزين المحلي أولاً لضمان عدم ضياع البيانات
             localStorage.setItem("smart_sys_employees", JSON.stringify(employees));
             localStorage.setItem("smart_sys_month_settings", JSON.stringify(monthSettings));
             localStorage.setItem("smart_sys_attendance", JSON.stringify(attendance));
@@ -809,18 +822,14 @@
 
             const payload = { employees, monthSettings, attendance, financialActions, currentMonthRecords };
 
-            // 2. إرسال البيانات إلى Google Sheets (مع الهيدر الصحيح وبدون no-cors)
             try {
                 await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
+                    mode: 'no-cors', 
                     body: JSON.stringify(payload)
                 });
                 updateSyncIndicator(true, "تم المزامنة والحفظ بنجاح");
             } catch(e) {
-                console.error("Sync Error:", e);
                 updateSyncIndicator(false, "خطأ أثناء محاولة حفظ البيانات!");
             }
         }
@@ -878,17 +887,20 @@
             recalculateWholeSystem();
         }
 
+        // تصفية الموظفين حسب القسم وحسب تاريخ المباشرة وتاريخ إنهاء الخدمات
         function getFilteredEmployees() {
             let emps = currentDepartment === "all" ? employees : employees.filter(emp => emp.department === currentDepartment);
             
             const [year, month] = currentMonthKey.split('-').map(Number);
             return emps.filter(emp => {
+                // استبعاد من تاريخ مباشرته أحدث من الشهر المحدد
                 if (emp.startDate) {
                     const sd = new Date(emp.startDate);
                     if (sd.getFullYear() > year || (sd.getFullYear() === year && sd.getMonth() > month)) {
                         return false; 
                     }
                 }
+                // استبعاد من تاريخ إنهاء خدماته أقدم من الشهر المحدد (يشطب من الأشهر القادمة)
                 if (emp.terminationDate) {
                     const td = new Date(emp.terminationDate);
                     if (td.getFullYear() < year || (td.getFullYear() === year && td.getMonth() < month)) {
@@ -1038,7 +1050,6 @@
                             <button class="btn btn-sm btn-warning" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'advance', 'advance_salary')"><i class="fas fa-hand-holding-usd"></i></button>
                             <button class="btn btn-sm btn-secondary" style="background-color:#0f172a;" onclick="openEmpRecordsModal('${emp.id}', '${emp.name}')"><i class="fas fa-list"></i></button>
                             <button class="btn btn-sm btn-danger" style="background-color:#475569;" onclick="openTerminationModal('${emp.id}', '${emp.name}')" title="إنهاء خدمات"><i class="fas fa-user-slash"></i></button>
-                            <button class="btn btn-sm btn-danger" style="background-color:#b91c1c;" onclick="deleteEmployee('${emp.id}')" title="حذف الموظف نهائياً"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
                 `;
@@ -1100,30 +1111,6 @@
                 closeModal('terminationModal');
                 recalculateWholeSystem();
                 showToast("تم إنهاء خدمات الموظف بنجاح", "success");
-            }
-        }
-
-        function deleteEmployee(empId) {
-            const hasFinancial = financialActions.some(a => a.empId === empId);
-            const hasItems = itemsRecords.some(a => a.empId === empId);
-            const hasAbsence = absenceRecords.some(a => a.empId === empId);
-            const hasDisbursement = disbursements.some(a => a.empId === empId);
-
-            if (hasFinancial || hasItems || hasAbsence || hasDisbursement) {
-                showToast("لا يمكن حذف الموظف لوجود حركات مالية أو غيابات مرتبطة به!", "error");
-                return;
-            }
-
-            if (confirm("هل أنت متأكد من حذف هذا الموظف نهائياً؟ لا يمكن التراجع عن هذا الإجراء.")) {
-                employees = employees.filter(e => e.id !== empId);
-                for (let month in attendance) {
-                    if (attendance[month] && attendance[month][empId]) {
-                        delete attendance[month][empId];
-                    }
-                }
-                commitStorage();
-                recalculateWholeSystem();
-                showToast("تم حذف الموظف بنجاح", "success");
             }
         }
 
