@@ -557,7 +557,6 @@
     <!-- Modal: Financial Actions -->
     <div class="modal-overlay" id="financialActionModal">
         <div class="modal-content">
-            <!-- (Unchanged internal content) -->
             <div class="modal-header">
                 <h3 id="faModalTitle">قيد حركة مالية جديدة</h3>
                 <button class="close-modal" onclick="closeModal('financialActionModal')"><i class="fas fa-times"></i></button>
@@ -599,7 +598,6 @@
     <!-- Modal: Absence -->
     <div class="modal-overlay" id="absenceModal">
         <div class="modal-content">
-            <!-- (Unchanged) -->
             <div class="modal-header">
                 <h3 id="absenceModalTitle">سجل غيابات الموظف</h3>
                 <button class="close-modal" onclick="closeModal('absenceModal')"><i class="fas fa-times"></i></button>
@@ -718,7 +716,6 @@
             updateSyncIndicator(false, "جاري جلب البيانات من جوجل شيت...");
             try {
                 if (!GOOGLE_WEB_APP_URL) return;
-                // تمت إضافة كاسر الكاش لتجنب قراءة بيانات قديمة عند تحديث الصفحة
                 const noCacheUrl = GOOGLE_WEB_APP_URL + "?t=" + new Date().getTime();
                 const response = await fetch(noCacheUrl);
                 const data = await response.json();
@@ -744,16 +741,15 @@
                 if(localStorage.getItem("smart_sys_month_settings")) {
                     monthSettings = JSON.parse(localStorage.getItem("smart_sys_month_settings"));
                     if (monthSettings._absenceRecords) absenceRecords = monthSettings._absenceRecords;
-                    if (monthSettings._disbursements) disbursements = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._disbursements || [];
-                    if (monthSettings._itemsRecords) itemsRecords = JSON.parse(localStorage.getItem("smart_sys_month_settings"))._itemsRecords || [];
+                    if (monthSettings._disbursements) disbursements = monthSettings._disbursements || [];
+                    if (monthSettings._itemsRecords) itemsRecords = monthSettings._itemsRecords || [];
                 }
                 onGlobalMonthYearChange();
             }
         }
 
-        // --- دالة مساعدة لحساب الراتب بناءً على 30 يوماً وتاريخ المباشرة/الإنهاء ---
         function getEmployeeSalaryDetails(emp, monthKey) {
-            const dailyRate = emp.salary / 30; // الحساب الثابت على 30 يوماً
+            const dailyRate = emp.salary / 30; 
             let baseSalary = emp.salary;
             const [year, month] = monthKey.split('-').map(Number);
             
@@ -889,20 +885,17 @@
             recalculateWholeSystem();
         }
 
-        // تصفية الموظفين حسب القسم وحسب تاريخ المباشرة وتاريخ إنهاء الخدمات
         function getFilteredEmployees() {
             let emps = currentDepartment === "all" ? employees : employees.filter(emp => emp.department === currentDepartment);
             
             const [year, month] = currentMonthKey.split('-').map(Number);
             return emps.filter(emp => {
-                // استبعاد من تاريخ مباشرته أحدث من الشهر المحدد
                 if (emp.startDate) {
                     const sd = new Date(emp.startDate);
                     if (sd.getFullYear() > year || (sd.getFullYear() === year && sd.getMonth() > month)) {
                         return false; 
                     }
                 }
-                // استبعاد من تاريخ إنهاء خدماته أقدم من الشهر المحدد (يشطب من الأشهر القادمة)
                 if (emp.terminationDate) {
                     const td = new Date(emp.terminationDate);
                     if (td.getFullYear() < year || (td.getFullYear() === year && td.getMonth() < month)) {
@@ -1052,7 +1045,6 @@
                             <button class="btn btn-sm btn-warning" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'advance', 'advance_salary')"><i class="fas fa-hand-holding-usd"></i></button>
                             <button class="btn btn-sm btn-secondary" style="background-color:#0f172a;" onclick="openEmpRecordsModal('${emp.id}', '${emp.name}')"><i class="fas fa-list"></i></button>
                             <button class="btn btn-sm btn-danger" style="background-color:#475569;" onclick="openTerminationModal('${emp.id}', '${emp.name}')" title="إنهاء خدمات"><i class="fas fa-user-slash"></i></button>
-                            <!-- تمت إضافة زر الحذف هنا -->
                             <button class="btn btn-sm btn-danger" style="background-color:#b91c1c;" onclick="deleteEmployee('${emp.id}')" title="حذف الموظف نهائياً"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
@@ -1118,7 +1110,6 @@
             }
         }
 
-        // --- دالة الحذف الآمن للموظف ---
         function deleteEmployee(empId) {
             const hasFinancial = financialActions.some(a => a.empId === empId);
             const hasItems = itemsRecords.some(a => a.empId === empId);
