@@ -254,7 +254,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Month Settings (unchanged) -->
             <div id="tab-month-settings" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -301,7 +300,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Attendance -->
             <div id="tab-attendance" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -326,7 +324,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Payroll -->
             <div id="tab-payroll" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -353,7 +350,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Disbursement -->
             <div id="tab-disbursement" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -383,7 +379,6 @@
                     </div>
                 </div>
                 <div class="card">
-                    <!-- ... Report filters remain ... -->
                     <div class="card-header">
                         <div class="card-title"><i class="fas fa-calendar-alt"></i> تقرير محرك الرواتب المصروفة بناءً على نطاق التواريخ</div>
                     </div>
@@ -422,7 +417,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Logs -->
             <div id="tab-logs" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -446,7 +440,6 @@
                 </div>
             </div>
 
-            <!-- Tab: Reports -->
             <div id="tab-reports" class="tab-content">
                 <div class="card">
                     <div class="card-header">
@@ -489,7 +482,6 @@
         </div>
     </div> 
     
-    <!-- Modal: Employee Form -->
     <div class="modal-overlay" id="employeeModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -529,7 +521,6 @@
         </div>
     </div>
 
-    <!-- Modal: Termination (New) -->
     <div class="modal-overlay" id="terminationModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -554,7 +545,6 @@
         </div>
     </div>
 
-    <!-- Modal: Financial Actions -->
     <div class="modal-overlay" id="financialActionModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -595,7 +585,6 @@
         </div>
     </div>
 
-    <!-- Modal: Absence -->
     <div class="modal-overlay" id="absenceModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -633,7 +622,6 @@
         </div>
     </div>
 
-    <!-- Modal: Records -->
     <div class="modal-overlay" id="empRecordsModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -783,6 +771,7 @@
             monthSettings._disbursements = disbursements;
             monthSettings._itemsRecords = itemsRecords; 
 
+            // 1. الحفظ في التخزين المحلي أولاً لضمان عدم ضياع البيانات
             localStorage.setItem("smart_sys_employees", JSON.stringify(employees));
             localStorage.setItem("smart_sys_month_settings", JSON.stringify(monthSettings));
             localStorage.setItem("smart_sys_attendance", JSON.stringify(attendance));
@@ -820,14 +809,18 @@
 
             const payload = { employees, monthSettings, attendance, financialActions, currentMonthRecords };
 
+            // 2. إرسال البيانات إلى Google Sheets (مع الهيدر الصحيح وبدون no-cors)
             try {
                 await fetch(GOOGLE_WEB_APP_URL, {
                     method: 'POST',
-                    mode: 'no-cors', 
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
                     body: JSON.stringify(payload)
                 });
                 updateSyncIndicator(true, "تم المزامنة والحفظ بنجاح");
             } catch(e) {
+                console.error("Sync Error:", e);
                 updateSyncIndicator(false, "خطأ أثناء محاولة حفظ البيانات!");
             }
         }
