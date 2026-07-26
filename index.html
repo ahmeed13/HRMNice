@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نظام إدارة الحضور والرواتب الذكي - لوحة الإدارة (أوفلاين)</title>
     
-    <!-- ملاحظة مهمة للأوفلاين: الخطوط والأيقونات تحتاج إنترنت لتعمل من هذه الروابط في أول مرة. 
-         إذا أردت تشغيلها بدون إنترنت نهائياً، يجب تحميل ملفات الخطوط (Tajawal) ومكتبة (FontAwesome) ووضعها في نفس المجلد -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -136,7 +134,10 @@
         .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 500; }
         .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.4; color: var(--primary); }
 
-        .print-only { display: none; }
+        .dept-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; }
+        .dept-nicecurl { background-color: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
+        .dept-restaurant { background-color: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
+
         @media print {
             body { background: white; color: black; padding: 0; }
             header, .main-nav, .stats-grid, .btn, .card-header .btn, .emp-actions, .modal-overlay, #monthSelectorCard { display: none !important; }
@@ -146,10 +147,6 @@
             th, td { border: 1px solid #000; padding: 8px; font-size: 0.85rem; }
             th { background: #eee !important; color: black; }
         }
-        
-        .dept-badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; }
-        .dept-nicecurl { background-color: #fce7f3; color: #db2777; border: 1px solid #fbcfe8; }
-        .dept-restaurant { background-color: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
     </style>
 </head>
 <body>
@@ -157,7 +154,7 @@
     <div id="loginOverlay">
         <div class="login-box">
             <h2><i class="fa-solid fa-lock" style="color: var(--primary);"></i> لوحة الإدارة</h2>
-            <p>النظام محمي، الرجاء إدخل رمز المرور السري</p>
+            <p>النظام محمي، الرجاء إدخال رمز المرور السري</p>
             <input type="password" id="adminPassword" placeholder="******" onkeypress="handleLoginKeyPress(event)" inputmode="numeric">
             <button onclick="loginToSystem()">تسجيل الدخول <i class="fa-solid fa-arrow-left"></i></button>
             <div id="loginError">الرمز غير صحيح، حاول مرة أخرى!</div>
@@ -226,7 +223,7 @@
                 <button class="nav-tab" onclick="switchTab('payroll', this)"><i class="fas fa-calculator"></i> مسيرات حساب الرواتب</button>
                 <button class="nav-tab" onclick="switchTab('disbursement', this)"><i class="fas fa-cash-register"></i> صرف الرواتب والتقارير الزمنية</button>
                 <button class="nav-tab" onclick="switchTab('logs', this)"><i class="fas fa-history"></i> السجلات المالية الحركية</button>
-                <button class="nav-tab" onclick="switchTab('reports', this)"><i class="fas fa-file-invoice-dollar"></i> التقارير الشاملة والتصدير</button>
+                <button class="nav-tab" onclick="switchTab('reports', this)"><i class="fas fa-file-invoice-dollar"></i> التقارير الشاملة واستيراد/تصدير</button>
             </nav>
 
             <div class="stats-grid">
@@ -252,7 +249,10 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title"><i class="fas fa-users-cog"></i> قاعدة بيانات الموظفين المسجلين</div>
-                        <button class="btn btn-primary" onclick="openModal('employeeModal')"><i class="fas fa-user-plus"></i> إضافة موظف جديد</button>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="openModal('employeeModal')"><i class="fas fa-user-plus"></i> إضافة موظف جديد</button>
+                            <button class="btn btn-warning" onclick="triggerImportFileInput()"><i class="fas fa-file-upload"></i> رفع واستيراد بيانات</button>
+                        </div>
                     </div>
                     <div id="employeesContainer" class="employees-grid"></div>
                 </div>
@@ -453,8 +453,10 @@
             <div id="tab-reports" class="tab-content">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title"><i class="fas fa-file-invoice"></i> مركز التقارير الشاملة ومسيرات التدقيق المالي للمتصفح</div>
-                        <div style="display: flex; gap: 10px;">
+                        <div class="card-title"><i class="fas fa-file-invoice"></i> مركز التقارير الشاملة ومسيرات التدقيق والنسخ الاحتياطي</div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-warning" onclick="triggerImportFileInput()"><i class="fas fa-upload"></i> رفع واستيراد بيانات</button>
+                            <button class="btn btn-secondary" onclick="exportFullSystemBackup()"><i class="fas fa-download"></i> تصدير نسخة احتياطية (JSON)</button>
                             <button class="btn btn-success" onclick="exportToCSV()"><i class="fas fa-file-excel"></i> تصدير لـ Excel (CSV)</button>
                             <button class="btn btn-primary" onclick="printReport()"><i class="fas fa-print"></i> أمر طباعة فوري</button>
                         </div>
@@ -491,6 +493,9 @@
 
         </div>
     </div> 
+
+    <!-- ملف حفي لإدخال رفع البيانات المخفية -->
+    <input type="file" id="systemDataFileInput" style="display: none;" accept=".json,.csv" onchange="handleSystemDataUpload(event)">
     
     <!-- Modal: Employee Form -->
     <div class="modal-overlay" id="employeeModal">
@@ -709,8 +714,6 @@
     <div class="toast" id="systemToast"></div>
 
     <script>
-        // تمت إزالة رابط جوجل شيت، النظام الآن يعتمد على الذاكرة المحلية (Local Storage) بالكامل.
-
         document.addEventListener("DOMContentLoaded", () => {
             if (sessionStorage.getItem("admin_logged_in") === "true") { unlockSystem(); }
         });
@@ -719,7 +722,6 @@
 
         function loginToSystem() {
             const pass = document.getElementById("adminPassword").value;
-            // يمكنك تغيير الرقم السري من هنا
             if (pass === "103130") {
                 sessionStorage.setItem("admin_logged_in", "true");
                 document.getElementById("loginError").style.display = "none";
@@ -733,7 +735,7 @@
             document.getElementById("loginOverlay").style.display = "none";
             document.getElementById("mainAppContent").style.display = "block";
             initializeDefaultDates();
-            loadLocalData(); // تم التعديل لتحميل البيانات من المتصفح مباشرة
+            loadLocalData();
         }
 
         let employees = [];
@@ -760,7 +762,6 @@
             currentMonthKey = `${today.getFullYear()}-${today.getMonth()}`;
         }
 
-        // دالة جديدة تعتمد على التخزين المحلي فقط
         function loadLocalData() {
             updateSyncIndicator(true, "متصل - وضع التخزين المحلي");
             try {
@@ -781,6 +782,62 @@
                 console.error("خطأ في قراءة البيانات المحلية:", e);
                 updateSyncIndicator(false, "حدث خطأ أثناء تحميل البيانات المحلية");
             }
+        }
+
+        function triggerImportFileInput() {
+            document.getElementById('systemDataFileInput').click();
+        }
+
+        function handleSystemDataUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.employees || data.financialActions) {
+                        if (data.employees) employees = data.employees;
+                        if (data.monthSettings) monthSettings = data.monthSettings;
+                        if (data.attendance) attendance = data.attendance;
+                        if (data.financialActions) financialActions = data.financialActions;
+                        if (data.absenceRecords) absenceRecords = data.absenceRecords;
+                        if (data.disbursements) disbursements = data.disbursements;
+                        if (data.itemsRecords) itemsRecords = data.itemsRecords;
+                        
+                        commitStorage();
+                        recalculateWholeSystem();
+                        showToast("تم استيراد ورفع كافة البيانات بنجاح!", "success");
+                    } else {
+                        showToast("نسق الملف غير متوافق!", "error");
+                    }
+                } catch (err) {
+                    showToast("حدث خطأ أثناء قراءة الملف، تأكد من صحته", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportFullSystemBackup() {
+            const backupData = {
+                employees,
+                monthSettings,
+                attendance,
+                financialActions,
+                absenceRecords,
+                disbursements,
+                itemsRecords,
+                exportDate: new Date().toISOString()
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `نسخة_احتياطية_النظام_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("تم تصدير النسخة الاحتياطية بنجاح", "success");
         }
 
         function getEmployeeSalaryDetails(emp, monthKey) {
@@ -813,15 +870,12 @@
             return { dailyRate, baseSalary, activeDays };
         }
 
-        // تم تعديل دالة الحفظ لتعتمد بالكامل على التخزين المحلي بدون الاتصال بأي خادم
         function commitStorage() {
-            // تحديث الكائنات المرتبطة
             monthSettings._absenceRecords = absenceRecords;
             monthSettings._disbursements = disbursements;
             monthSettings._itemsRecords = itemsRecords; 
 
             try {
-                // 1. الحفظ محلياً بشكل فوري
                 localStorage.setItem("smart_sys_employees", JSON.stringify(employees));
                 localStorage.setItem("smart_sys_month_settings", JSON.stringify(monthSettings));
                 localStorage.setItem("smart_sys_attendance", JSON.stringify(attendance));
