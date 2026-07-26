@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة الحضور والرواتب الذكي - لوحة الإدارة</title>
+    <title>نظام إدارة الحضور والرواتب الذكي - لوحة الإدارة (أوفلاين)</title>
+    
+    <!-- ملاحظة مهمة للأوفلاين: الخطوط والأيقونات تحتاج إنترنت لتعمل من هذه الروابط في أول مرة. 
+         إذا أردت تشغيلها بدون إنترنت نهائياً، يجب تحميل ملفات الخطوط (Tajawal) ومكتبة (FontAwesome) ووضعها في نفس المجلد -->
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -166,7 +169,7 @@
             <div class="header-container">
                 <h1><i class="fas fa-wallet"></i> نظام إدارة الحضور والرواتب الذكي</h1>
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <div id="syncIndicator" class="sync-status"><i class="fas fa-sync-alt fa-spin"></i> جاري الاتصال بجوجل شيت...</div>
+                    <div id="syncIndicator" class="sync-status connected"><i class="fas fa-database"></i> وضع الأوفلاين (تخزين محلي)</div>
                     <div class="currency-badge"><i class="fas fa-money-bill-wave"></i> العملة: الدينار العراقي (IQD)</div>
                 </div>
             </div>
@@ -179,6 +182,7 @@
                     <div class="form-group" style="margin-bottom:0;">
                         <label><i class="fas fa-calendar-alt"></i> اختر سنة العمل الحالية:</label>
                         <select id="globalYear" onchange="onGlobalMonthYearChange()">
+                            <option value="2024">2024</option>
                             <option value="2025">2025</option>
                             <option value="2026">2026</option>
                             <option value="2027">2027</option>
@@ -594,7 +598,7 @@
         </div>
     </div>
 
-    <!-- Modal: Add Item (الجديد) -->
+    <!-- Modal: Add Item -->
     <div class="modal-overlay" id="itemModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -705,7 +709,7 @@
     <div class="toast" id="systemToast"></div>
 
     <script>
-        const GOOGLE_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzToaCTMJgje6_hgs4QupwjKBttWVdv7sJRW_6B_gQfMUDALP3mvdta858SHfS5VVs2PQ/exec"; 
+        // تمت إزالة رابط جوجل شيت، النظام الآن يعتمد على الذاكرة المحلية (Local Storage) بالكامل.
 
         document.addEventListener("DOMContentLoaded", () => {
             if (sessionStorage.getItem("admin_logged_in") === "true") { unlockSystem(); }
@@ -729,7 +733,7 @@
             document.getElementById("loginOverlay").style.display = "none";
             document.getElementById("mainAppContent").style.display = "block";
             initializeDefaultDates();
-            loadFromGoogleSheet();
+            loadLocalData(); // تم التعديل لتحميل البيانات من المتصفح مباشرة
         }
 
         let employees = [];
@@ -756,30 +760,10 @@
             currentMonthKey = `${today.getFullYear()}-${today.getMonth()}`;
         }
 
-        async function loadFromGoogleSheet() {
-            updateSyncIndicator(false, "جاري جلب البيانات من جوجل شيت...");
+        // دالة جديدة تعتمد على التخزين المحلي فقط
+        function loadLocalData() {
+            updateSyncIndicator(true, "متصل - وضع التخزين المحلي");
             try {
-                if (!GOOGLE_WEB_APP_URL) return;
-                const noCacheUrl = GOOGLE_WEB_APP_URL + "?t=" + new Date().getTime();
-                const response = await fetch(noCacheUrl);
-                const data = await response.json();
-                
-                if (data.employees) employees = data.employees;
-                if (data.attendance) attendance = data.attendance;
-                if (data.financialActions) financialActions = data.financialActions;
-                if (data.monthSettings) {
-                    monthSettings = data.monthSettings;
-                    if (monthSettings._absenceRecords) absenceRecords = monthSettings._absenceRecords;
-                    if (monthSettings._disbursements) disbursements = monthSettings._disbursements;
-                    if (monthSettings._itemsRecords) itemsRecords = monthSettings._itemsRecords; 
-                }
-
-                updateSyncIndicator(true, "متصل بجوجل شيت");
-                onGlobalMonthYearChange();
-            } catch (e) {
-                console.error("فشل الجلب عبر الشبكة، جاري الاعتماد على الذاكرة المحلية:", e);
-                updateSyncIndicator(false, "فشل الاتصال بخادم جوجل (يتم عرض البيانات المحلية)");
-                
                 if(localStorage.getItem("smart_sys_employees")) employees = JSON.parse(localStorage.getItem("smart_sys_employees"));
                 if(localStorage.getItem("smart_sys_attendance")) attendance = JSON.parse(localStorage.getItem("smart_sys_attendance"));
                 if(localStorage.getItem("smart_sys_financial_actions")) financialActions = JSON.parse(localStorage.getItem("smart_sys_financial_actions"));
@@ -793,6 +777,9 @@
                     if (monthSettings._itemsRecords) itemsRecords = monthSettings._itemsRecords || [];
                 }
                 onGlobalMonthYearChange();
+            } catch (e) {
+                console.error("خطأ في قراءة البيانات المحلية:", e);
+                updateSyncIndicator(false, "حدث خطأ أثناء تحميل البيانات المحلية");
             }
         }
 
@@ -826,78 +813,33 @@
             return { dailyRate, baseSalary, activeDays };
         }
 
-        async function commitStorage() {
+        // تم تعديل دالة الحفظ لتعتمد بالكامل على التخزين المحلي بدون الاتصال بأي خادم
+        function commitStorage() {
             // تحديث الكائنات المرتبطة
             monthSettings._absenceRecords = absenceRecords;
             monthSettings._disbursements = disbursements;
             monthSettings._itemsRecords = itemsRecords; 
 
-            // 1. الحفظ محلياً بشكل فوري لضمان عدم ضياع أي حركة مالية أبداً
-            localStorage.setItem("smart_sys_employees", JSON.stringify(employees));
-            localStorage.setItem("smart_sys_month_settings", JSON.stringify(monthSettings));
-            localStorage.setItem("smart_sys_attendance", JSON.stringify(attendance));
-            localStorage.setItem("smart_sys_financial_actions", JSON.stringify(financialActions));
-
-            if (!GOOGLE_WEB_APP_URL) return;
-            updateSyncIndicator(false, "جاري رفع البيانات إلى جوجل شيت...");
-            
-            const config = monthSettings[currentMonthKey] || { workingDays: 30 };
-            const currentMonthRecords = getFilteredEmployees().map(emp => {
-                const salaryDetails = getEmployeeSalaryDetails(emp, currentMonthKey);
-                const absentDays = absenceRecords.filter(a => a.empId === emp.id && a.monthKey === currentMonthKey).length;
-                const absenceDeduction = absentDays * salaryDetails.dailyRate;
-
-                let empBonus = 0, empDeduction = 0, empAdvance = 0;
-                financialActions.filter(act => act.empId === emp.id && act.monthKey === currentMonthKey).forEach(act => {
-                    if(act.type === 'bonus') empBonus += act.amount;
-                    if(act.type === 'deduction') empDeduction += act.amount;
-                    if(act.type === 'advance') empAdvance += act.amount;
-                });
-
-                let totalItemsAmount = itemsRecords.filter(i => i.empId === emp.id && i.monthKey === currentMonthKey).reduce((s, i) => s + i.amount, 0);
-                let dedItems = Math.max(0, totalItemsAmount - 50000); 
-                empDeduction += dedItems;
-
-                const netSalary = Math.round(salaryDetails.baseSalary - absenceDeduction + empBonus - empDeduction - empAdvance);
-                
-                return {
-                    id: emp.id, name: emp.name, department: emp.department || "-", phone: emp.phone || "-",
-                    salary: salaryDetails.baseSalary, present: config.workingDays - absentDays, absent: absentDays,
-                    absenceDeduction: Math.round(absenceDeduction), bonus: empBonus,
-                    deduction: empDeduction, advance: empAdvance, netSalary: netSalary
-                };
-            });
-
-            const payload = { employees, monthSettings, attendance, financialActions, currentMonthRecords };
-
             try {
-                // تمت إزالة وضع no-cors لكي نتمكن من قراءة استجابة السيرفر ومعرفة حالة الحفظ
-                // مع استخدام text/plain لتفادي مشاكل CORS مع Google Apps Script
-                const response = await fetch(GOOGLE_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify(payload)
-                });
+                // 1. الحفظ محلياً بشكل فوري
+                localStorage.setItem("smart_sys_employees", JSON.stringify(employees));
+                localStorage.setItem("smart_sys_month_settings", JSON.stringify(monthSettings));
+                localStorage.setItem("smart_sys_attendance", JSON.stringify(attendance));
+                localStorage.setItem("smart_sys_financial_actions", JSON.stringify(financialActions));
                 
-                if (response.ok) {
-                    updateSyncIndicator(true, "تم حفظ ومزامنة الحركات بنجاح");
-                } else {
-                    updateSyncIndicator(false, "تم الحفظ محلياً فقط (يوجد خطأ في الاستجابة)");
-                }
-            } catch(e) {
-                console.error("خطأ المزامنة:", e);
-                updateSyncIndicator(false, "تم حفظ الحركات محلياً (لا يوجد اتصال إنترنت)");
+                updateSyncIndicator(true, "تم حفظ البيانات محلياً بنجاح");
+            } catch (e) {
+                console.error("خطأ في الحفظ المحلي:", e);
+                updateSyncIndicator(false, "خطأ في التخزين المحلي - المساحة قد تكون ممتلئة");
             }
         }
 
-        function updateSyncIndicator(isConnected, text) {
+        function updateSyncIndicator(isSuccess, text) {
             const ind = document.getElementById("syncIndicator");
             if (!ind) return;
             ind.textContent = text;
-            if(isConnected) { ind.className = "sync-status connected"; ind.innerHTML = `<i class="fas fa-cloud-check"></i> ` + text; } 
-            else { ind.className = "sync-status"; ind.innerHTML = `<i class="fas fa-sync-alt fa-spin"></i> ` + text; }
+            if(isSuccess) { ind.className = "sync-status connected"; ind.innerHTML = `<i class="fas fa-check-circle"></i> ` + text; } 
+            else { ind.className = "sync-status"; ind.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ` + text; }
         }
 
         function onGlobalMonthYearChange() {
@@ -1100,7 +1042,6 @@
                             <button class="btn btn-sm btn-danger" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'deduction', 'general')" title="خصم عام"><i class="fas fa-minus-circle"></i></button>
                             <button class="btn btn-sm btn-warning" onclick="openFinancialActionModal('${emp.id}', '${emp.name}', 'advance', 'advance_salary')" title="سلفة/سحب نقد"><i class="fas fa-hand-holding-usd"></i></button>
                             
-                            <!-- الزر الجديد لسحب الآيتمات -->
                             <button class="btn btn-sm btn-warning" style="background:#d97706; color:#fff;" onclick="openItemModal('${emp.id}', '${emp.name}')" title="سحب وتسجيل آيتم"><i class="fas fa-box-open"></i></button>
                             
                             <button class="btn btn-sm btn-secondary" style="background-color:#0f172a;" onclick="openEmpRecordsModal('${emp.id}', '${emp.name}')" title="عرض السجلات المالية والآيتمات"><i class="fas fa-list"></i></button>
@@ -1194,7 +1135,6 @@
             }
         }
 
-        // --- دوال النافذة الجديدة لسحب الآيتمات ---
         function openItemModal(empId, empName) {
             document.getElementById("itemEmpId").value = empId;
             document.getElementById("itemEmpName").value = empName;
